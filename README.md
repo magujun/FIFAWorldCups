@@ -1,4 +1,3 @@
-![FIFA](
 [![Build Status](https://app.travis-ci.com/magujun/fifaworldcups.svg?branch=main)](https://app.travis-ci.com/magujun/fifaworldcups)
 
 # FIFAWorldCups
