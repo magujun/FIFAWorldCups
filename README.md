@@ -40,6 +40,7 @@ This project is being developed with the following technologies:
 ## 🛠️ Tools
 Useful tools for setting up this project:
 
+- [NetBeans](https://netbeans.org/) :: Apache NetBeans IDE
 - [CertBot](https://certbot.org/) :: CertBot
 
 ## ⤵ Setup
