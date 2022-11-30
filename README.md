@@ -34,12 +34,18 @@ This project is being developed with the following technologies:
 - [Apache](https://apache.org/) :: Apache2 Web Server
 - [NGINX](https://nginx.org/) :: NGINX Web Server
 - [OpenSSL](https://openSSL.org/) :: OpenSSL
-- [LetsEncrypt](https://openSSL.org/) :: LetsEncrypt CA
+- [LetsEncrypt](https://letsencrypt.org/) :: LetsEncrypt CA
 - [...Work in progress](https://github.com/magujun/fifaworldcups)
+
+## 🛠️ Tools
+Useful tools for setting up this project:
+
+- [CertBot](https://certbot.org/) :: CertBot
 
 ## ⤵ Setup
 
 These instructions will take you to a copy of the project running on your local machine for testing and development purposes.
+
 
 ```bash
     - git clone https://github.com/magujun/fifaworldcups.git
