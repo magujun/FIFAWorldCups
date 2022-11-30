@@ -1,0 +1,279 @@
+/*
+  Created on : Nov 19, 2022, 6:00:00 PM
+  Author     : Marcelo Guimaraes Junior
+*/
+
+body {
+    background-color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px; 
+    width: calc(100% - 40px);
+    padding: 10px 10px;
+    margin: 20px;
+    background-color: lightblue;
+    border-radius: 0 10px;
+    z-index: 1;
+    border: solid 1px rgba(0, 0, 0, 0.175);
+}
+
+.container.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
+}
+
+.main {
+    justify-content: flex-start;
+}
+
+.main > .row > * {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+.menucover {
+    width: 110px;
+    height: 78px;
+    background-color: lightblue;
+    position: absolute;
+    top: 21px;
+    right: 21px;
+    padding: 10px;
+    border-radius: 0 10px 0 0;
+    z-index: 100;
+}
+
+.menu {
+    width: 100px;
+    height: 70px;
+    background-color: lightblue;
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    padding: 10px;
+    border-radius: 0 0 10px 10px;
+    border: solid 1px rgba(0, 0, 0, 0.175);
+    transition: all ease-in-out 0.5s;
+    z-index: 10;
+}
+
+.menu > p {
+    margin-top: 10px;
+    line-height: 10px;
+}
+
+.menu > p > a:link, a:visited, 
+a:hover, a:active  { 
+    text-decoration: none;
+}
+
+.menu.show {
+    transform: translateY(65px);
+    z-index:1;
+}
+
+.menu:hover {
+    transform: translateY(65px);
+    z-index:1;
+}
+
+.card {
+    padding: 1rem;
+    background-color: lightblue;
+    width: 400px;
+    border-radius: 0.25rem;
+    box-shadow: 4px 4px 6px 2px rgba(25,25,25,0.5);
+    transition: all;
+}
+
+.logo {
+    display: block;
+    height: 20px;
+    border-radius: 0;
+}
+
+img.match {
+    display: flex;
+    height: 20px;
+    border-radius: 0;
+}
+
+.name {
+    position: absolute;
+    top: 45px;
+    right: 120px;
+    padding: 5px;
+    z-index: 1000;
+}
+
+.avatar {
+    position: absolute;
+    object-fit: cover;
+    top: 25px;
+    right: 40px;
+    height: 60px;
+    width: 60px;
+    padding: 5px;
+    border-radius: 0 20px 0 20px;
+    z-index: 1000;
+}
+
+.avatar:hover {
+    opacity: 0.75;
+}
+
+.header-flag {
+    position: absolute;
+    right: 40px;
+    top: 65px;
+    height: 20px;
+    border-radius: 50%;
+    z-index: 1100;
+}
+
+.stats-flag {
+    position: fixed;
+    margin-top: 5px;
+    height: 20px;
+    width: 20px;
+}
+
+.stats-country {
+    margin-left: 25px;
+    width: 90%;
+}
+
+.match-band {
+    position: absolute;
+    top: calc(100% - 150px);
+    width: 50%;
+    height: 60px;
+    background-color: lightgrey;
+    align-items: center;
+}
+
+.match-band.home {
+    animation: slideInLeft ease-in-out 2s;
+    left: 0;
+}
+
+.home-name {
+    padding-right: 0 !important;
+}
+
+@keyframes slideInLeft {
+    0% { left: -50%; }
+    100% { left: 0; }
+}
+
+.match-band.away {
+    animation: slideInRight ease-in-out 2s;
+    right: 0;    
+    padding-left: 0 !important;
+}
+
+.away-name {
+    padding-left: 0 !important;
+}
+
+.match-flag {
+    width: 60px;
+    height: 60px;
+    vertical-align: unset;
+}
+
+.match-flag.home {
+    border-radius: 25% 0 0 25%;
+}
+
+.match-flag.away {
+    border-radius: 0 25% 25% 0;
+}
+
+@keyframes slideInRight {
+    0% { right: -50%; }
+    100% { right: 0; }
+}
+
+input :not(.form-check .form-control){
+    padding: 1rem !important;
+}
+
+.row {
+    margin: 1rem 0 !important;
+}
+
+.hidden {
+    display: none;
+}
+
+.loadAnimation {
+    animation: fadeIn ease-in-out 1.5s;
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.destroyAnimation {
+    animation: fadeOut ease-in-out 1.5s;
+    opacity: 0;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@media screen and (max-width: 600px){
+
+    body {
+        font-size: 0.75rem !important;
+    }
+    
+    .country2 {
+        display: none !important;
+    }
+    
+    h4 {
+        font-size: 1rem !important;
+    }
+    
+    .match-band {
+    position: absolute;
+    top: calc(100% - 150px);
+    width: 50%;
+    height: 40px;
+    background-color: lightgrey;
+    align-items: center;
+    }
+
+    .match-flag {
+    width: 40px;
+    height: 40px;
+    vertical-align: unset;
+    }
+    
+    .home-name {
+        padding-right: 0 !important;
+    }
+    
+    .away-name {
+        padding-left: 0 !important;
+    }
+}
