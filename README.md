@@ -24,22 +24,22 @@ A <strong>PHP</strong> based website that offers users data from all **[FIFA™]
 
 This project is being developed with the following technologies:
 
-- [PHP](https://www.java.com/en/) :: PHP™ Language 
-- [MySQL](https://mySQL.org/) :: MySQL Relational DB
-- [Javascript](https://javascript.org/) :: ECMAScript/Javascript Language
-- [HTML5](https://w3c.org/) :: HTML5 Hypertext Markup Language
-- [CSS3](https://w3c.org/) :: CSS3 Cascading Style Sheets
-- [Apache](https://apache.org/) :: Apache2 Web Server
-- [NGINX](https://nginx.org/) :: NGINX Web Server
-- [OpenSSL](https://openSSL.org/) :: OpenSSL
-- [LetsEncrypt](https://letsencrypt.org/) :: LetsEncrypt CA
+- [PHP](https://www.php.net/) :: PHP™ Language 
+- [MySQL](https://mySQL.com/) :: MySQL Relational DB
+- [Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference) :: ECMAScript/Javascript Language
+- [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML) :: HTML5 Hypertext Markup Language
+- [CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS) :: CSS3 Cascading Style Sheets
+- [Apache](https://httpd.apache.org/docs/current/) :: Apache2 HTTP Server
+- [NGINX](https://www.nginx.com) :: NGINX Web Server
+- [OpenSSL](https://www.openssl.org) :: OpenSSL
+- [LetsEncrypt](https://letsencrypt.org) :: LetsEncrypt CA
 - [...Work in progress](https://github.com/magujun/fifaworldcups)
 
 ## 🛠️ Tools
 Useful tools for setting up this project:
 
-- [NetBeans](https://netbeans.org/) :: Apache NetBeans IDE
-- [CertBot](https://certbot.org/) :: CertBot
+- [NetBeans](https://netbeans.apache.org) :: Apache NetBeans IDE
+- [CertBot](https://certbot.eff.org) :: CertBot
 
 ## ⤵ Setup
 
