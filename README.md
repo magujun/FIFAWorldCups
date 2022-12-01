@@ -68,7 +68,7 @@ The following commands are an example for a GNU/Linux x86_64 environment (Debian
 
 ## 🎓 Who taught?
 
-All the Java and PHP classes that led me to develop this project were taught by **[Dan K. Ling](https://people.okanagan.bc.ca/dling/)** as part of Okanagan College's Computer Information Systems **COSC-213** Course.
+All the PHP classes that led me to develop this project were taught by **[Dan K. Ling](https://people.okanagan.bc.ca/dling/)** as part of Okanagan College's Computer Information Systems **COSC-213** Course.
 
 ## 🤔 Contribute
 
