@@ -93,22 +93,24 @@ while ($data = mysqli_fetch_array($result)) {
 asort($countries);
 $country_name = $countries[$country][1];
  
-if (filter_input(INPUT_POST, 'country1') && !filter_input(INPUT_POST,'update')) {
-    if (filter_input(INPUT_POST, 'country1') != $_SESSION['country1']) {
+if (filter_input(INPUT_POST, 'country1') 
+        && !filter_input(INPUT_POST,'update') 
+        && filter_input(INPUT_POST, 'country1') != $_SESSION['country1']) {
         $country1 = filter_input(INPUT_POST, 'country1');
+        $country1_name = $countries[$country1][1];
         $away_country = $country1;
-        $away_country_name = $countries[$country1][1];
+        $away_country_name = $country1_name;
         $country2 = $_SESSION['country2'];
         $country2_name = $_SESSION['country2_name'];
-    }
-} else if (filter_input(INPUT_POST, 'country2') && !filter_input(INPUT_POST,'update')) {
-    if (filter_input(INPUT_POST, 'country2') != $_SESSION['country2']) {
+} else if (filter_input(INPUT_POST, 'country2') 
+        && !filter_input(INPUT_POST,'update') 
+        && filter_input(INPUT_POST, 'country2') != $_SESSION['country2']) {
         $country2 = filter_input(INPUT_POST, 'country2');
+        $country2_name = $countries[$country2][1];
         $away_country = $country2;
-        $away_country_name = $countries[$country2][1];
+        $away_country_name = $country2_name;
         $country1 = $_SESSION['country1'];
         $country1_name = $_SESSION['country1_name'];
-    }
 } else {
     $countries_sort = $countries;
     sort($countries_sort);
@@ -125,10 +127,6 @@ if (filter_input(INPUT_POST, 'country1') && !filter_input(INPUT_POST,'update')) 
     $country2_name = $countries[$country2][1];
     $away_country_name = $country1_name;
     $away_country = $country1;
-    $_SESSION['country1'] = $country1;
-    $_SESSION['country1_name'] = $country1_name;
-    $_SESSION['country2'] = $country2;
-    $_SESSION['country2_name'] = $country2_name;
 }
 foreach ($countries as $countryinfo) {
     if ($countryinfo[0] == $country1) {
@@ -266,6 +264,10 @@ while ($data = mysqli_fetch_array($result)) {
     $runner = $data['runners'];
 }
 
+$_SESSION['country1'] = $country1;
+$_SESSION['country1_name'] = $country1_name;
+$_SESSION['country2'] = $country2;
+$_SESSION['country2_name'] = $country2_name;
 mysqli_close($mysqli);
 ?>
 <!DOCTYPE html>
