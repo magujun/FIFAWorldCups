@@ -82,44 +82,42 @@ if (mysqli_num_rows($queryuser) === 1) {
     exit;
 }
 
-//create and issue the query for countries select options
-$country_options1 = "<option value=''></option>";
-$country_options2 = "<option value=''></option>";
+//create and issue the query for all countries initials and names
 $sqlquery = "SELECT * FROM countries";
 $result = mysqli_query($mysqli, $sqlquery) or die(mysqli_error($mysqli));
 while ($data = mysqli_fetch_array($result)) {
     $countries[$data[0]] = [$data[0], $data[1]];
 }
 asort($countries);
+//Get country name from query result
 $country_name = $countries[$country][1];
- 
-if (filter_input(INPUT_POST, 'country1') 
-        && !filter_input(INPUT_POST,'update') 
-        && filter_input(INPUT_POST, 'country1') != $_SESSION['country1']) {
-        $country1 = filter_input(INPUT_POST, 'country1');
-        $country1_name = $countries[$country1][1];
-        $away_country = $country1;
-        $away_country_name = $country1_name;
-        $country2 = $_SESSION['country2'];
-        $country2_name = $_SESSION['country2_name'];
-} else if (filter_input(INPUT_POST, 'country2') 
-        && !filter_input(INPUT_POST,'update') 
-        && filter_input(INPUT_POST, 'country2') != $_SESSION['country2']) {
-        $country2 = filter_input(INPUT_POST, 'country2');
-        $country2_name = $countries[$country2][1];
-        $away_country = $country2;
-        $away_country_name = $country2_name;
-        $country1 = $_SESSION['country1'];
-        $country1_name = $_SESSION['country1_name'];
+
+//Check if user selected country1, country2 or select them randomly
+if (filter_input(INPUT_POST, 'country1') && !filter_input(INPUT_POST, 'update') && filter_input(INPUT_POST, 'country1') != $_SESSION['country1']) {
+    $country1 = filter_input(INPUT_POST, 'country1');
+    $country1_name = $countries[$country1][1];
+    $away_country = $country1;
+    $away_country_name = $country1_name;
+    $country2 = $_SESSION['country2'];
+    $country2_name = $_SESSION['country2_name'];
+} else if (filter_input(INPUT_POST, 'country2') && !filter_input(INPUT_POST, 'update') && filter_input(INPUT_POST, 'country2') != $_SESSION['country2']) {
+    $country2 = filter_input(INPUT_POST, 'country2');
+    $country2_name = $countries[$country2][1];
+    $away_country = $country2;
+    $away_country_name = $country2_name;
+    $country1 = $_SESSION['country1'];
+    $country1_name = $_SESSION['country1_name'];
 } else {
     $countries_sort = $countries;
     sort($countries_sort);
     $random = 0;
-    while ($country1 == $countries_sort[$country][0]) {
+    $country1 = $country;
+    $country2 = $country;
+    while ($country1 == $country) {
         $random = rand(0, sizeof($countries_sort) - 1);
         $country1 = $countries_sort[$random][0];
     }
-    while ($country2 == $countries_sort[$country][0] || $country2 == $country1) {
+    while ($country2 == $country || $country2 == $country1) {
         $random = rand(0, sizeof($countries_sort) - 1);
         $country2 = $countries_sort[$random][0];
     }
@@ -128,6 +126,10 @@ if (filter_input(INPUT_POST, 'country1')
     $away_country_name = $country1_name;
     $away_country = $country1;
 }
+
+// Populate countries dropdowns
+$country_options1 = "<option value=''></option>";
+$country_options2 = "<option value=''></option>";
 foreach ($countries as $countryinfo) {
     if ($countryinfo[0] == $country1) {
         $country_options1 .= "<option value=" . $countryinfo[0] . " selected>" . $countryinfo[1] . "</option>";
@@ -144,12 +146,10 @@ foreach ($countries as $countryinfo) {
     }
 }
 
-$home_country_match = "<h4>" . $country_name . "</h4>";
-$away_country_match = "<h4>" . $away_country_name . "</h4>";
-
-//create and issue the query for stats data
+// Create and issue the query for stats data
 $sqlquery = "SELECT * "
         . "FROM worldcupmatches "
+        . "INNER JOIN worldcups ON worldcupmatches.year = worldcups.year "
         . "WHERE home_team_initials in ('" . $country . "', '" . $country1 . "', '" . $country2 . "') "
         . "or away_team_initials in ('" . $country . "', '" . $country1 . "', '" . $country2 . "')";
 $result = mysqli_query($mysqli, $sqlquery) or die(mysqli_error($mysqli));
@@ -159,17 +159,29 @@ $country2_matches = 0;
 $country_won = 0;
 $country1_won = 0;
 $country2_won = 0;
+$home_away_match = array();
+$home_away_matches = array();
 
 while ($match = mysqli_fetch_array($result)) {
     if ($match['Home_Team_Initials'] == $country) {
         $country_matches++;
         if ($match['Home_Team_Goals'] > $match['Away_Team_Goals'])
             $country_won++;
+        if ($match['Away_Team_Initials'] == $away_country) {
+            array_push($home_away_match, $match['Year'], $match['Country'], $match['Home_Team_Goals'], $match['Away_Team_Goals']);
+            $home_away_matches[] = $home_away_match;
+            $home_away_match = array();
+        }
     }
     if ($match['Away_Team_Initials'] == $country) {
         $country_matches++;
         if ($match['Away_Team_Goals'] > $match['Home_Team_Goals'])
             $country_won++;
+        if ($match['Home_Team_Initials'] == $away_country) {
+            array_push($home_away_match, $match['Year'], $match['Country'], $match['Away_Team_Goals'], $match['Home_Team_Goals']);
+            $home_away_matches[] = $home_away_match;
+            $home_away_match = array();
+        }
     }
     if ($match['Home_Team_Initials'] == $country1) {
         $country1_matches++;
@@ -221,9 +233,10 @@ $table_open = "
         </th>
       
         <th scope='col' class='col-3'>
+        <div>
             <img src='images/flags/$country.svg' class='stats-flag'/>
             <select name='country' class='form-control-plaintext readonly stats-country mb-2'><option value='$country'>$country_name</option></select></th>
-
+        </div>
         <th scope='col' class='col-3'>
             <img src='images/flags/$country1.svg' class='stats-flag'/>
                 <select name='country1' class='form-control-plaintext stats-country mb-2' onchange='this.form.submit()'>$country_options1</select></th>
@@ -256,7 +269,7 @@ $table_open = "
     </table>";
 
 //create and issue the query for cups data
-$sqlquery = "SELECT * FROM worldcups WHERE winner in ('" . $country_name . "', '" . $country1_name . "')";
+$sqlquery = "SELECT * FROM worldcups WHERE winner in ('" . $country_name . "', '" . $away_country_name . "')";
 $result = mysqli_query($mysqli, $sqlquery) or die(mysqli_error($mysqli));
 while ($data = mysqli_fetch_array($result)) {
     $cup_year = $data['year'];
@@ -264,6 +277,18 @@ while ($data = mysqli_fetch_array($result)) {
     $runner = $data['runners'];
 }
 
+$home_away_match = "";
+$i = 1;
+foreach ($home_away_matches as $match) {
+    $home_away_match .= "<div id='match" . $i++ . "' class='match text-center'>"
+            . "<h5>" . $match[1] . "</h5>"
+            . "<h3>" . $match[0] . "</h3>"
+            . "<h1 class='mb-2' ><strong>" 
+            . $match[2]
+            . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            . $match[3] . "</h1></strong>"
+            . "</div>";
+}
 $_SESSION['country1'] = $country1;
 $_SESSION['country1_name'] = $country1_name;
 $_SESSION['country2'] = $country2;
@@ -285,7 +310,7 @@ mysqli_close($mysqli);
             <h3><img src="images/FIFA.svg" class="logo"/> World Cups</h3>
             <div>
                 <?php echo "<span class='name'>" . $fname . " " . $lname . "</span>"; ?>
-                <?php echo $display_avatar; ?>
+<?php echo $display_avatar; ?>
                 <img src="images/flags/<?php echo $country; ?>.svg" class='header-flag'/>
                 <div id="menucover" class="menucover"></div>
                 <div id="menu" class="menu text-center">
@@ -294,7 +319,7 @@ mysqli_close($mysqli);
                 </div>
             </div>
         </div>
-        <div class="container main">
+        <div class="container">
             <div class="row mt-3">
                 <div class="col-auto">
                     <h2>All Time Stats</h2>
@@ -302,17 +327,20 @@ mysqli_close($mysqli);
             </div>
             <!form method="post" action="<?php echo $PHP_SELF; ?>">
             <form method="post" id="update" action="">
-                <div class="row mt-3 mb-3 match">
-                </div>
                 <div class="row">
                     <div class="col-12">
                         <?php echo $table_open; ?>
                     </div>
                 </div>
             </form>
+            <div class="row home-away-matches">
+                <div>
+                    <?php echo $home_away_match; ?>
+                </div>
+            </div>
             <div class="row match-band home">
                 <div class="col-auto ms-auto home-name">
-                    <?php echo $home_country_match; ?>
+                    <?php echo "<strong>" .$country_name . "</strong>"; ?>
                 </div>
                 <div class="col-auto ms-auto home flag">
                     <img src="images/flags/<?php echo $country; ?>.svg" class="match-flag home"/>
@@ -323,7 +351,7 @@ mysqli_close($mysqli);
                     <img src="images/flags/<?php echo $away_country; ?>.svg" class="match-flag away"/>
                 </div>
                 <div class="col-auto me-auto away-name">
-                    <?php echo $away_country_match; ?>
+                    <?php echo "<strong>" .$away_country_name . "</strong>"; ?>
                 </div>
             </div>
         </div>

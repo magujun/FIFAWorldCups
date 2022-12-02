@@ -24,11 +24,14 @@ const avatar = document.querySelector('#avatar');
 if (avatar != null) {
     avatar.onmouseover = (event) => {
         var menu = document.querySelector('#menu');
-        menu.classList.add('show');
+        if (menu != null) menu.classList.add('show');
     };
 
     avatar.onmouseleave = (event) => {
        var menu = document.querySelector('#menu');
-       setTimeout(() => menu.classList.remove('show'), 1500);
+       if (menu != null) setTimeout(() => menu.classList.remove('show'), 1500);
     };
 }
+
+const matches = document.querySelectorAll('.match');
+if (matches != null && matches.length > 0) matches[0].classList.add('loadAnimation');

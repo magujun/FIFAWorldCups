@@ -5,7 +5,7 @@
  */
 session_start();
 if ($_SESSION['origin'] != hex2bin("createaccount")) {
-    $_SESSION['errormsg'] = "";
+    $errors = array();
 }
 ?>
 <!DOCTYPE html>
@@ -24,9 +24,16 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
         $firstname = filter_input(INPUT_POST, 'firstname');
         $lastname = filter_input(INPUT_POST, 'lastname');
         $password = filter_input(INPUT_POST, 'password');
+        $passwordcheck = filter_input(INPUT_POST, 'password-check');
         $email = strtolower(filter_input(INPUT_POST, 'email'));
         $country = filter_input(INPUT_POST, 'country');
-
+         
+        if ($password != $passwordcheck) {
+            $errors['password'] = "<p>The confirmation password doesn't match!"
+                    . "</br>Please make sure to confirm your password.</p>";
+            $_SESSION['origin'] = bin2hex("createaccount");
+        }
+         
         //connect to server and select database
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
         $mysqli = mysqli_connect("localhost", "cs213user", "letmein", "fifaDB");
@@ -41,39 +48,25 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
         mysqli_stmt_execute($stmtemail);
         $queryemail = mysqli_stmt_get_result($stmtemail);
 
-        $sqluser = "SELECT * FROM auth_users WHERE username =?";
+        $sqluser = "SELECT * FROM auth_users WHERE username = ?" ;
         $stmtuser = mysqli_prepare($mysqli, $sqluser);
         mysqli_stmt_bind_param($stmtuser, "s", $username);
         mysqli_stmt_execute($stmtuser);
         $queryusername = mysqli_stmt_get_result($stmtuser);
 
-        //get the number of rows in the result sets
+//      //get the number of rows in the result sets
         //if there's a match, alert that email/user already exists and return
         if (mysqli_num_rows($queryemail) === 1) {
-            mysqli_close($mysqli);
-            $_SESSION['errormsg'] = "<h5>Your email address has already been used!<h5>"
-                    . "<h6>Please use a different email address to create a new account.</h6>";
+            $errors['email'] = "<p>Your email address has already been used!"
+                    . "</br>Please use a different email address to create a new account.</p>";
             $_SESSION['origin'] = bin2hex("createaccount");
-            //redirect back to form
-            $url_path = $PHP_SELF;
-            header("HTTP/1.1 302 Redirected");
-            header("Location: " . $url_path . "");
-            echo "<script>window.location = '" . $url_path . "';</script>";
-            echo "window.location.replace('" . $url_path . "');";
-            exit;
-        } else if (mysqli_num_rows($queryusername) === 1) {
-            mysqli_close($mysqli);
-            $_SESSION['errormsg'] = "<h5>This username has already been used!<h5>"
-                    . "<h6>Please choose a different username for your new account.</h6>";
+        }
+        if (mysqli_num_rows($queryusername) === 1) {
+            $errors['username'] = "<p>This username has already been used!"
+                    . "</br>Please choose a different username for your new account.</p>";
             $_SESSION['origin'] = bin2hex("createaccount");
-            //redirect back to form
-            $url_path = $PHP_SELF;
-            header("HTTP/1.1 302 Redirected");
-            header("Location: " . $url_path . "");
-            echo "<script>window.location = '" . $url_path . "';</script>";
-            echo "window.location.replace('" . $url_path . "');";
-            exit;
-        } else {
+        }
+        if (sizeof($errors) == 0) {
             //user does not exist, create the new user
             //create a prepared INSERT statement to avoid SQL Injection
             //bind parameters and issue the query
@@ -134,173 +127,190 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
         mysqli_stmt_execute($stmtusername);
         $queryusername = mysqli_stmt_get_result($stmtusername);
         
-        //get the record or the user
-        $username = $queryusername['username'];
-        $firstname = $queryusername['firstname'];
-        $lastname = $queryusername['lastname'];
-        $email = $queryusername['email'];
-        $country = $queryusername['country'];
-        mysqli_close($mysqli);
+        //get the record for the user
+        $record = mysqli_fetch_array($queryusername);
+        $username = $record['username'];
+        $firstname = $record['fname'];
+        $lastname = $record['lname'];
+        $email = $record['email'];
+        
+        //display the user avatar
+        $display_avatar = "<img src='images/default_avatar.png' id='avatar' class='avatar'/>";
+        $path = "/var/www/html/FIFAWorldCups/";
+        $folder = "images/users/" . $username . "/";
+        $useravatar = $path . $folder . basename($username . '_avatar.png');
+        $avatar = $folder . basename($username . '_avatar.png');
+        $country = $record['country'];
+        if (file_exists($useravatar)) {
+            $display_avatar = "<a href='main.php'><img src='" . $avatar . "' id='avatar' class='avatar'/></a>";
+        }
         ?>
-        <body>
+    <body>
+        <div class="container mt-3 mb-3">
+            <?php echo $display_avatar; ?>
+            <div class="m-3 col-12">
+                <!form method="post" action="<?php echo $PHP_SELF; ?>">
+                <form method="post" id="account" action="">
+                    <div class="form-group row mt-3 mb-3">
+                        <div class="col-6">
+                            <h3>World Cups Account Created</h3>
+                        </div>
+                        <div class="col">
+                            <a href="index.php" type="button" class="btn btn-info">Login</a>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="firstname">First Name: </label>
+                            <input type="text" name="firstname" class="form-control-plaintext" value="<?php echo $firstname; ?>" readonly>
+                        </div>
+                        <div class="col-6">
+                            <label for="lastname">Last Name: </label>                           
+                            <input type="text" name="lastname" class="form-control-plaintext" value="<?php echo $lastname; ?>" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="username">User Name: </label>
+                            <input type="text" name="username" class="form-control-plaintext" value="<?php echo $username; ?>" readonly>
+                        </div>
+                        <div class="col-6">
+                            <label for="email">Email: </label>
+                            <input type="text" name="email" class="form-control-plaintext" value="<?php echo $email; ?>" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="country">Country: </label>
+                            <input type="text" name="country" class="form-control-plaintext" value="<?php echo $country; ?>" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="password">Change Password: </label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
+                        <div class="col-6">
+                            <label for="password">Confirm New Password: </label>
+                            <input type="password" name="password-check" class="form-control">
+                            <small id="passwordlHelp" class="form-text text-muted justify-content-end">
+                                You can change your password if you want. &#x1F609;
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col">
+                            <button type="submit" name="save" value="Save" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row mt-3">
+                    <!form method="POST" action="<?php echo $PHP_SELF; ?>" enctype="multipart/form-data">
+                    <form method="POST" id="upload" action="" enctype="multipart/form-data" class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-row">
+                            <div class="col">
+                                <input type="hidden" name="MAX_FILE_SIZE" value="100000000"/>
+                                <label for="fileupload">Upload your avatar: </label> 
+                                <input type="file" name="fileupload" class="form-control"/>
+                            </div>
+                            <div class="col">
+                                <button type="submit" name="upload" value="Upload" class="btn btn-primary form-control">Upload</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    <?php
+    } else {
+        //connect to server and select database
+        $mysqli = mysqli_connect("localhost", "cs213user", "letmein", "fifaDB");
+        //create and issue the query
+        $sqlquery = "SELECT * FROM countries;";
+        $result = mysqli_query($mysqli, $sqlquery) or die(mysqli_error($mysqli));
+        $country_options = "<option value=''></option>";
+        while ($data = mysqli_fetch_array($result)) {
+            $countries[$data[0]] = [$data[0], $data[1]];
+        }
+        asort($countries);
+        foreach ($countries as $country) {
+            $country_options .= "<option value=" . $country[0] . ">" . $country[1] . "</option>";
+        }
+        ?>
+        <body class="loadAnimation">
             <div class="container mt-3 mb-3">
                 <div class="m-3 col-12">
                     <!form method="post" action="<?php echo $PHP_SELF; ?>">
                     <form method="post" id="account" action="">
                         <div class="form-group row mt-3 mb-3">
                             <div class="col-6">
-                                <h3>World Cups Account Created</h3>
+                                <h3>World Cups Create Account</h3>
                             </div>
                             <div class="col">
-                                <a href="index.php" type="button" class="btn btn-info">Login</a>
+                                <a href="index.php" type="button" class="btn btn-info">Return to Login</a>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-6">
+                            <div class="col">
                                 <label for="firstname">First Name: </label>
-                                <input type="text" name="firstname" class="form-control-plaintext" value="<?php echo $firstname ?>" readonly>
+                                <input type="text" name="firstname" class="form-control" value="<?php echo htmlspecialchars($_POST['firstname']);?>" required>
                             </div>
-                            <div class="col-6">
+                            <div class="col">
                                 <label for="lastname">Last Name: </label>                           
-                                <input type="text" name="lastname" class="form-control-plaintext" value="<?php echo $lastname ?>" readonly>
+                                <input type="text" name="lastname" class="form-control" value="<?php echo htmlspecialchars($_POST['lastname']);?>" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-6">
+                            <div class="col">
                                 <label for="username">User Name: </label>
-                                <input type="text" name="username" class="form-control-plaintext" value="<?php echo $username ?>" readonly>
+                                <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($_POST['username']);?>" required>
+                                <small id="emailHelp" class="form-text text-muted">
+                                    <?php if ($errors['username'] != null) echo $errors['username']; ?>
+                                </small>
                             </div>
-                            <div class="col-6">
+                            <div class="col">
                                 <label for="email">Email: </label>
-                                <input type="text" name="email" class="form-control-plaintext" value="<?php echo $email ?>" readonly>
+                                <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($_POST['email']);?>" required>
+                                <?php if ($errors['email'] != null) {
+                                echo "<small id='emailHelp' class='form-text text-muted'> Don't worry, we won't share your email with anyone. &#x1F609\;</small>";
+                                } else { echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['email'] . "</small>";
+                                } ?>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <label for="password">Password: </label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label for="password">Confirm Password: </label>
+                                <input type="password" name="password-check" class="form-control" required>
+                                <?php if ($errors['password'] != null) {
+                                echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
+                                }?>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-6">
                                 <label for="country">Country: </label>
-                                <input type="text" name="country" class="form-control-plaintext" value="<?php echo $country ?>" readonly>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-6">
-                                <label for="password">Change Password: </label>
-                                <input type="password" name="password" class="form-control">
-                            </div>
-                            <div class="col-6">
-                                <label for="password">Confirm New Password: </label>
-                                <input type="password" name="password-check" class="form-control">
-                                <small id="passwordlHelp" class="form-text text-muted justify-content-end">
-                                    You can change your password if you want.
-                                </small>
+                                <select name="country" class="form-control" required>
+                                    <?php echo $country_options; ?>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col">
-                                <button type="submit" name="save" value="Save" class="btn btn-primary">Save</button>
+                                <button type="submit" name="create" value="Submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
                     </form>
-                    <div class="row mt-3">
-                        <!form method="POST" action="<?php echo $PHP_SELF; ?>" enctype="multipart/form-data">
-                        <form method="POST" id="upload" action="" enctype="multipart/form-data" class="col-lg-6 col-md-6 col-sm-12">
-                            <div class="form-row">
-                                <div class="col">
-                                    <input type="hidden" name="MAX_FILE_SIZE" value="100000000"/>
-                                    <label for="fileupload">Upload your avatar: </label> 
-                                    <input type="file" name="fileupload" class="form-control"/>
-                                </div>
-                                <div class="col">
-                                    <button type="submit" name="upload" value="Upload" class="btn btn-primary form-control">Upload</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
                 </div>
-            <?php
-            } else {
-                //connect to server and select database
-                $mysqli = mysqli_connect("localhost", "cs213user", "letmein", "fifaDB");
-                //create and issue the query
-                $sqlquery = "SELECT * FROM countries;";
-                $result = mysqli_query($mysqli, $sqlquery) or die(mysqli_error($mysqli));
-                $country_options = "<option value=''></option>";
-                while ($data = mysqli_fetch_array($result)) {
-                    $countries[$data[0]] = [$data[0], $data[1]];
+                    <?php
                 }
-                asort($countries);
-                foreach ($countries as $country) {
-                    $country_options .= "<option value=" . $country[0] . ">" . $country[1] . "</option>";
-                }
-                $display_account = $_SESSION['errormsg'];
                 ?>
-                <body class="loadAnimation">
-                    <div class="container mt-3 mb-3">
-                        <div class="m-3 col-12">
-                            <!form method="post" action="<?php echo $PHP_SELF; ?>">
-                            <form method="post" id="account" action="">
-                                <div class="form-group row mt-3 mb-3">
-                                    <div class="col-6">
-                                        <h3>World Cups Create Account</h3>
-                                    </div>
-                                    <div class="col">
-                                        <a href="index.php" type="button" class="btn btn-info">Return to Login</a>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <label for="firstname">First Name: </label>
-                                        <input type="text" name="firstname" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="lastname">Last Name: </label>                           
-                                        <input type="text" name="lastname" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <label for="username">User Name: </label>
-                                        <input type="text" name="username" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="email">Email: </label>
-                                        <input type="text" name="email" class="form-control">
-                                        <small id="emailHelp" class="form-text text-muted">
-                                            Don't worry, we won't share your email with anyone. &#x1F609;
-                                        </small>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <label for="password">Password: </label>
-                                        <input type="password" name="password" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="password">Confirm Password: </label>
-                                        <input type="password" name="password-check" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-6">
-                                        <label for="country">Country: </label>
-                                        <select name="country" class="form-control">
-                                            <?php echo $country_options; ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <button type="submit" name="create" value="Submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <?php
-                        }
-                        ?>
-                        <div class="row mt-3 mb-3">
-                            <?php echo $display_account; ?>                        
-                        </div>
-                    </div>
-                </div>
-            </body>
-            <script type="text/javascript" src="js/fifaworldcups.js"></script>
+            <div class="row mt-3 mb-3">
+                <?php echo $display_account; ?>                        
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="js/fifaworldcups.js"></script>
 </html>
