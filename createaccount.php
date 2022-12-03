@@ -79,7 +79,7 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
 
             $path_name = "/var/www/html/FIFAWorldCups/images/users/";
             $target_path = $path_name . $username;
-            mkdir($target_path, 0755);
+            mkdir($target_path, 0775);
 
             $display_account = "<h5>Your new account has been created.<h5>"
                     . "<h6>Thank you for joining us!</h6>";
@@ -90,29 +90,38 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
             $_SESSION['state'] = "creating";
         }
     }
+    $display_account = $_SESSION['displayaccount'];
     if (isset($_FILES['fileupload']) && filter_input(INPUT_POST, 'upload')) {
         $username = $_SESSION['username'];
         $path = "/var/www/html/FIFAWorldCups/";
         $folder = "images/users/" . $username . "/";
-        $newfile = $path . $folder . basename($username . '_avatar.png');
+        $newpng = $folder . basename($username . '_avatar.png');
+        $newfile = $path . $newpng;
         if ($_FILES['fileupload']['type'] == "image/gif") {
             $file = imagepng(imagecreatefromgif($_FILES['fileupload']['tmp_name']), $newfile);
-        } elseif ($_FILES['fileupload']['type'] == "image/jpeg") {
+        } else if ($_FILES['fileupload']['type'] == "image/jpeg") {
             $file = imagepng(imagecreatefromjpeg($_FILES['fileupload']['tmp_name']), $newfile);
+        } else if ($_FILES['fileupload']['type'] == "image/wbmp") {
+            $file = imagepng(imagecreatefromwbmp($_FILES['fileupload']['tmp_name']), $newfile);            
+        } else {
+            $file = basename($_FILES['fileupload']['tmp_name']);
         }
-        if (move_uploaded_file($_FILES['fileupload']['tmp_name'], $newfile)) {
-            $display_account = "<h6>The file \"" . basename($_FILES['fileupload']['name'])
+        if ($file && move_uploaded_file($_FILES['fileupload']['tmp_name'], $newfile)) {
+            $_SESSION['displayaccount'] = "<h6>The file \"" . basename($_FILES['fileupload']['name'])
                     . "\" has been uploaded.</h6>";
         } else {
-            $display_account = "<h6>There was an error uploading the file, please try again.</h6>";
-        }
+            $_SESSION['displayaccount'] = "<h5>There was an error uploading the file</h5>"
+                    . "<h6>Please make sure you have selected an image file.</h5>";
+        } 
         $display_avatar = "<div class=\"col-auto\">"
                 . "<img src=\"" . $newpng . "\" class=\"avatar\"/></div>";
+        $display_account = $_SESSION['displayaccount'];
         header("Refresh:0");
         $_SESSION['state'] = "created";
     }
     
     if ($_SESSION['state'] == "creating" || $_SESSION['state'] == 'created') {
+        $username = $_SESSION['username'];
         //connect to server and select database
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
         $mysqli = mysqli_connect("localhost", "cs213user", "letmein", "fifaDB");
@@ -193,7 +202,7 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
                         <div class="col-6">
                             <label for="password">Confirm New Password: </label>
                             <input type="password" name="password-check" class="form-control">
-                            <small id="passwordlHelp" class="form-text text-muted justify-content-end">
+                            <small id="passwordHelp" class="form-text text-muted">
                                 You can change your password if you want. &#x1F609;
                             </small>
                         </div>
@@ -236,77 +245,77 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
             $country_options .= "<option value=" . $country[0] . ">" . $country[1] . "</option>";
         }
         ?>
-        <body class="loadAnimation">
-            <div class="container mt-3 mb-3">
-                <div class="m-3 col-12">
-                    <!form method="post" action="<?php echo $PHP_SELF; ?>">
-                    <form method="post" id="account" action="">
-                        <div class="form-group row mt-3 mb-3">
-                            <div class="col-6">
-                                <h3>World Cups Create Account</h3>
-                            </div>
-                            <div class="col">
-                                <a href="index.php" type="button" class="btn btn-info">Return to Login</a>
-                            </div>
+    <body class="loadAnimation">
+        <div class="container mt-3 mb-3">
+            <div class="m-3 col-12">
+                <!form method="post" action="<?php echo $PHP_SELF; ?>">
+                <form method="post" id="account" action="">
+                    <div class="form-group row mt-3 mb-3">
+                        <div class="col-6">
+                            <h3>World Cups Create Account</h3>
                         </div>
-                        <div class="form-group row">
-                            <div class="col">
-                                <label for="firstname">First Name: </label>
-                                <input type="text" name="firstname" class="form-control" value="<?php echo htmlspecialchars($_POST['firstname']);?>" required>
-                            </div>
-                            <div class="col">
-                                <label for="lastname">Last Name: </label>                           
-                                <input type="text" name="lastname" class="form-control" value="<?php echo htmlspecialchars($_POST['lastname']);?>" required>
-                            </div>
+                        <div class="col">
+                            <a href="index.php" type="button" class="btn btn-info">Return to Login</a>
                         </div>
-                        <div class="form-group row">
-                            <div class="col">
-                                <label for="username">User Name: </label>
-                                <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($_POST['username']);?>" required>
-                                <small id="emailHelp" class="form-text text-muted">
-                                    <?php if ($errors['username'] != null) echo $errors['username']; ?>
-                                </small>
-                            </div>
-                            <div class="col">
-                                <label for="email">Email: </label>
-                                <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($_POST['email']);?>" required>
-                                <?php if ($errors['email'] != null) {
-                                echo "<small id='emailHelp' class='form-text text-muted'> Don't worry, we won't share your email with anyone. &#x1F609\;</small>";
-                                } else { echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['email'] . "</small>";
-                                } ?>
-                            </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="firstname">First Name: </label>
+                            <input type="text" name="firstname" class="form-control" value="<?php echo htmlspecialchars($_POST['firstname']);?>" required>
                         </div>
-                        <div class="form-group row">
-                            <div class="col">
-                                <label for="password">Password: </label>
-                                <input type="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="col">
-                                <label for="password">Confirm Password: </label>
-                                <input type="password" name="password-check" class="form-control" required>
-                                <?php if ($errors['password'] != null) {
-                                echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
-                                }?>
-                            </div>
+                        <div class="col">
+                            <label for="lastname">Last Name: </label>                           
+                            <input type="text" name="lastname" class="form-control" value="<?php echo htmlspecialchars($_POST['lastname']);?>" required>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-6">
-                                <label for="country">Country: </label>
-                                <select name="country" class="form-control" required>
-                                    <?php echo $country_options; ?>
-                                </select>
-                            </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="username">User Name: </label>
+                            <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($_POST['username']);?>" required>
+                            <small id="emailHelp" class="form-text text-muted">
+                                <?php if ($errors['username'] != null) echo $errors['username']; ?>
+                            </small>
                         </div>
-                        <div class="form-group row">
-                            <div class="col">
-                                <button type="submit" name="create" value="Submit" class="btn btn-primary">Submit</button>
-                            </div>
+                        <div class="col">
+                            <label for="email">Email: </label>
+                            <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($_POST['email']);?>" required>
+                            <?php if ($errors['email'] != null) {
+                            echo "<small id='emailHelp' class='form-text text-muted'> Don't worry, we won't share your email with anyone. &#x1F609\;</small>";
+                            } else { echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['email'] . "</small>";
+                            } ?>
                         </div>
-                    </form>
-                </div>
-                    <?php
-                }
-                ?>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="password">Password: </label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="col">
+                            <label for="password">Confirm Password: </label>
+                            <input type="password" name="password-check" class="form-control" required>
+                            <?php if ($errors['password'] != null) {
+                            echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
+                            }?>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <label for="country">Country: </label>
+                            <select name="country" class="form-control" required>
+                                <?php echo $country_options; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col">
+                            <button type="submit" name="create" value="Submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <?php
+            }
+            ?>
             <div class="row mt-3 mb-3">
                 <?php echo $display_account; ?>                        
             </div>

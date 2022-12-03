@@ -36,28 +36,31 @@ $username = $_SESSION['username'];
         <link rel="icon" type="image/png" href="images/favicon.png">
     </head>
     <?php
-    $display_account = $_SESSION['displayaccount'];
     if (isset($_FILES['fileupload']) && filter_input(INPUT_POST, 'upload')) {
         $username = $_SESSION['username'];
         $path = "/var/www/html/FIFAWorldCups/";
         $folder = "images/users/" . $username . "/";
-        $newfile = $path . $folder . basename($username . '_avatar.png');
+        $newpng = $folder . basename($username . '_avatar.png');
+        $newfile = $path . $newpng;
         if ($_FILES['fileupload']['type'] == "image/gif") {
             $file = imagepng(imagecreatefromgif($_FILES['fileupload']['tmp_name']), $newfile);
-        } elseif ($_FILES['fileupload']['type'] == "image/jpeg") {
+        } else if ($_FILES['fileupload']['type'] == "image/jpeg") {
             $file = imagepng(imagecreatefromjpeg($_FILES['fileupload']['tmp_name']), $newfile);
-        } elseif ($_FILES['fileupload']['type'] == "image/jpeg") {
-            $file = imagepng(imagecreatefrompng($_FILES['fileupload']['tmp_name'], $newfile));            
+        } else if ($_FILES['fileupload']['type'] == "image/wbmp") {
+            $file = imagepng(imagecreatefromwbmp($_FILES['fileupload']['tmp_name']), $newfile);            
+        } else {
+            $file = basename($_FILES['fileupload']['tmp_name']);
         }
         if ($file && move_uploaded_file($_FILES['fileupload']['tmp_name'], $newfile)) {
-            $_SESSION['displayaccount'] = "<h6>The file \"" . basename($_FILES['fileupload']['name'])
+            $display_account = "<h6>The file \"" 
+                    . basename($_FILES['fileupload']['name'])
                     . "\" has been uploaded.</h6>";
         } else {
-            $_SESSION['displayaccount'] = "<h5>There was an error uploading the file</h5><h6>Please make sure you have selected an image file.</h5>";
+            $display_account = "<h5>There was an error uploading the file</h5>"
+                    . "<h6>Please make sure you have selected an image file.</h5>";
         } 
         $display_avatar = "<div class=\"col-auto\">"
                 . "<img src=\"" . $newpng . "\" class=\"avatar\"/></div>";
-        $display_account = $_SESSION['displayaccount'];
     }
 
     //connect to server and select database
@@ -161,7 +164,7 @@ $username = $_SESSION['username'];
                     <form method="POST" id="upload" action="" enctype="multipart/form-data" class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-row">
                             <div class="col">
-                                <input type="hidden" name="MAX_FILE_SIZE" value="500000000"/>
+                                <input type="hidden" name="MAX_FILE_SIZE" value="5000000000"/>
                                 <label for="fileupload">Upload your avatar: </label> 
                                 <input type="file" name="fileupload" class="form-control"/>
                             </div>
