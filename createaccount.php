@@ -107,15 +107,14 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
             $file = basename($_FILES['fileupload']['tmp_name']);
         }
         if ($file && move_uploaded_file($_FILES['fileupload']['tmp_name'], $newfile)) {
-            $_SESSION['displayaccount'] = "<h6>The file \"" . basename($_FILES['fileupload']['name'])
+            $display_account = "<h6>The file \"" . basename($_FILES['fileupload']['name'])
                     . "\" has been uploaded.</h6>";
         } else {
-            $_SESSION['displayaccount'] = "<h5>There was an error uploading the file</h5>"
+            $display_account = "<h5>There was an error uploading the file</h5>"
                     . "<h6>Please make sure you have selected an image file.</h5>";
         } 
         $display_avatar = "<div class=\"col-auto\">"
                 . "<img src=\"" . $newpng . "\" class=\"avatar\"/></div>";
-        $display_account = $_SESSION['displayaccount'];
         header("Refresh:0");
         $_SESSION['state'] = "created";
     }
@@ -160,38 +159,42 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
             <div class="m-3 col-12">
                 <!form method="post" action="<?php echo $PHP_SELF; ?>">
                 <form method="post" id="account" action="">
-                    <div class="form-group row mt-3 mb-3">
+                    <<div class="row mb-3 mt-3">
                         <div class="col-6">
                             <h3>World Cups Account Created</h3>
                         </div>
-                        <div class="col">
-                            <a href="index.php" type="button" class="btn btn-info">Login</a>
+                        <div class="col-2">
+                            <a href="index.php" type="button" class="btn btn-info">Return to Login</a>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-6">
-                            <label for="firstname">First Name: </label>
-                            <input type="text" name="firstname" class="form-control-plaintext" value="<?php echo $firstname; ?>" readonly>
-                        </div>
-                        <div class="col-6">
-                            <label for="lastname">Last Name: </label>                           
-                            <input type="text" name="lastname" class="form-control-plaintext" value="<?php echo $lastname; ?>" readonly>
+                    <div class="row mb-3">
+                        <label for="firstname" class="col-2 col-form-label">First Name: </label>
+                        <div class="col-4">
+                            <input type="text" name="firstname" class="form-control-plaintext" value="<?php echo $firstname ?>" readonly>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-6">
-                            <label for="username">User Name: </label>
-                            <input type="text" name="username" class="form-control-plaintext" value="<?php echo $username; ?>" readonly>
-                        </div>
-                        <div class="col-6">
-                            <label for="email">Email: </label>
-                            <input type="text" name="email" class="form-control-plaintext" value="<?php echo $email; ?>" readonly>
+                    <div class="row mb-3">
+                        <label for="lastname" class="col-2 col-form-label">Last Name: </label>                                                   
+                        <div class="col-4">
+                            <input type="text" name="lastname" class="form-control-plaintext" value="<?php echo $lastname ?>" readonly>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-6">
-                            <label for="country">Country: </label>
-                            <input type="text" name="country" class="form-control-plaintext" value="<?php echo $country; ?>" readonly>
+                    <div class="row mb-3">
+                        <label for="email" class="col-2 col-form-label">Email: </label>                        
+                        <div class="col-4">
+                            <input type="text" name="email" class="form-control-plaintext" value="<?php echo $email ?>" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="country" class="col-2 col-form-label">Country: </label>                        
+                        <div class="col-4">
+                            <input type="text" name="country" class="form-control-plaintext" value="<?php echo $country ?>" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="username" class="col-2 col-form-label">User Name: </label>
+                        <div class="col-4">
+                            <input type="text" name="username" class="form-control-plaintext" value="<?php echo $username ?>" readonly>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -202,9 +205,12 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
                         <div class="col-6">
                             <label for="password">Confirm New Password: </label>
                             <input type="password" name="password-check" class="form-control">
-                            <small id="passwordHelp" class="form-text text-muted">
+                            ?php if ($errors['password'] != null) {
+                            echo "<small id='passwdError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
+                            } else { echo "<small id='passwordlHelp' class='form-text text-muted'>
                                 You can change your password if you want. &#x1F609;
-                            </small>
+                            </small>";
+                            } ?>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -280,9 +286,9 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
                             <label for="email">Email: </label>
                             <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($_POST['email']);?>" required>
                             <?php if ($errors['email'] != null) {
-                            echo "<small id='emailHelp' class='form-text text-muted'> Don't worry, we won't share your email with anyone. &#x1F609\;</small>";
-                            } else { echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['email'] . "</small>";
-                            } ?>
+                            echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['email'] . "</small>";
+                            } else { echo "<small id='emailHelp' class='form-text text-muted'> Don't worry, we won't share your email with anyone. &#x1F609;</small>";
+                                } ?>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -294,7 +300,7 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
                             <label for="password">Confirm Password: </label>
                             <input type="password" name="password-check" class="form-control" required>
                             <?php if ($errors['password'] != null) {
-                            echo "<small id='emailError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
+                            echo "<small id='passwdError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
                             }?>
                         </div>
                     </div>

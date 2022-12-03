@@ -148,9 +148,12 @@ $username = $_SESSION['username'];
                         <div class="col-6">
                             <label for="password">Confirm New Password: </label>
                             <input type="password" name="password-check" class="form-control">
-                            <small id="passwordlHelp" class="form-text text-muted justify-content-end">
-                                You can change your password if you want.
-                            </small>
+                            <?php if ($errors['password'] != null) {
+                            echo "<small id='passwdError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
+                            } else { echo "<small id='passwordlHelp' class='form-text text-muted'>
+                                You can change your password if you want. &#x1F609;
+                            </small>";
+                            } ?>
                         </div>
                     </div>
                     <div class="row mb-3">
