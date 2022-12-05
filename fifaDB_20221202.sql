@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.31, for Linux (aarch64)
+-- MySQL dump 10.13  Distrib 8.0.31, for Linux (x86_64)
 --
 -- Host: localhost    Database: fifaDB
 -- ------------------------------------------------------
@@ -32,7 +32,7 @@ CREATE TABLE `auth_users` (
   `country` varchar(50) DEFAULT NULL,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `auth_users` (
 
 LOCK TABLES `auth_users` WRITE;
 /*!40000 ALTER TABLE `auth_users` DISABLE KEYS */;
-INSERT INTO `auth_users` VALUES (1,'magujun','Marcelo','Guimaraes Junior','ee743356ff7c7f8ce6bcc39bf0d6d47e520feca3','marcelo.guimaraesjunior@myokanagan.bc.ca','ITA','2022-11-20'),(2,'alex','Alex','Anthony','dce90bef6aa1f62abf5ea08ae5e6b30ba1cb9e6c','alex.anthony@myokanagan.bc.ca','GHA','2022-11-24'),(4,'fernanda','Fernanda','Malheiros Rodrigues Alves','f0b0ff18d68f8e83174a0d0b2a145fe40a97bf85','fernanda.alves@myokanagan.bc.ca','BRA','2022-11-24'),(5,'dling','Dan','Ling','3a0b4c1ca5a817304eb012130807824d3900a1d4','dling@okanagan.bc.ca','CHN','2022-11-24'),(6,'jberesford','Josh','Beresford','d11c7563fcbec68b583a6289197b19c9a3e0e8f1','josh.beresford@myokanagan.bc.ca','CAN','2022-11-24'),(7,'gpalma','Gustavo','Palma Olguin','3e9e1bb2a9630af4cca74ef44b0ed36e5c0831b6','gustavo.palma@myokanagan.bc.ca','COL','2022-11-25'),(9,'test1','Test1','User','b444ac06613fc8d63795be9ad0beaf55011936ac','test1@test.com','BRA','2022-11-25'),(10,'test2','Test2','User','109f4b3c50d7b0df729d299bc6f8e9ef9066971f','test2@test.com','BOL','2022-11-25'),(11,'test3','Test3','User','3ebfa301dc59196f18593c45e519287a23297589','test3@test.com','JAM','2022-11-25'),(12,'test4','Test4','User','1ff2b3704aede04eecb51e50ca698efd50a1379b','test4@example.com','CUB','2022-12-02'),(13,'test5','Test5','User','911ddc3b8f9a13b5499b6bc4638a2b4f3f68bf23','test5@test.com','CRO','2022-12-02'),(14,'test6','Test6','User','a66df261120b6c2311c6ef0b1bab4e583afcbcc0','test6@test.com','CMR','2022-12-02'),(15,'c','a','b','13fbd79c3d390e5d6585a21e11ff5ec1970cff0c','d@efg.hij','JAM','2022-12-02'),(16,'marcelo','Marcelo','Guimaraes','ee743356ff7c7f8ce6bcc39bf0d6d47e520feca3','marcelo@test.com','CHN','2022-12-02'),(17,'d','b','c','13fbd79c3d390e5d6585a21e11ff5ec1970cff0c','e@fg.hij','CRO','2022-12-02'),(18,'test8','Test8','User','d03f9d34194393019e6d12d7c942827ebd694443','test8@test.com','CRO','2022-12-02');
+INSERT INTO `auth_users` VALUES (1,'magujun','Marcelo','Guimaraes Junior','ee743356ff7c7f8ce6bcc39bf0d6d47e520feca3','marcelo.guimaraesjunior@myokanagan.bc.ca','ITA','2022-11-20'),(2,'alex','Alex','Anthony','dce90bef6aa1f62abf5ea08ae5e6b30ba1cb9e6c','alex.anthony@myokanagan.bc.ca','GHA','2022-11-24'),(4,'fernanda','Fernanda','Malheiros Rodrigues Alves','f0b0ff18d68f8e83174a0d0b2a145fe40a97bf85','fernanda.alves@myokanagan.bc.ca','BRA','2022-11-24'),(5,'dling','Dan','Ling','3a0b4c1ca5a817304eb012130807824d3900a1d4','dling@okanagan.bc.ca','CHN','2022-11-24'),(6,'jberesford','Josh','Beresford','d11c7563fcbec68b583a6289197b19c9a3e0e8f1','josh.beresford@myokanagan.bc.ca','CAN','2022-11-24'),(7,'gpalma','Gustavo','Palma Olguin','3e9e1bb2a9630af4cca74ef44b0ed36e5c0831b6','gustavo.palma@myokanagan.bc.ca','COL','2022-11-25'),(16,'marcelo','Marcelo','Guimaraes','ee743356ff7c7f8ce6bcc39bf0d6d47e520feca3','marcelo@test.com','CHN','2022-12-02');
 /*!40000 ALTER TABLE `auth_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -185,4 +185,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-02 18:38:16
+-- Dump completed on 2022-12-05  0:28:40

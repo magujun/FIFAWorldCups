@@ -100,7 +100,7 @@ $username = $_SESSION['username'];
         <div class="container mt-3 mb-3">
             <?php echo $display_avatar; ?>
             <div class="m-3 col-12">
-                <!form method="post" action="<?php echo $PHP_SELF; ?>">
+                <!form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                 <form method="post" id="account" action="">
                     <div class="row mb-3 mt-3">
                         <div class="col-6">
@@ -163,7 +163,7 @@ $username = $_SESSION['username'];
                     </div>
                 </form>
                 <div class="row mt-3">
-                    <!form method="POST" action="<?php echo $PHP_SELF; ?>" enctype="multipart/form-data">
+                    <!form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
                     <form method="POST" id="upload" action="" enctype="multipart/form-data" class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-row">
                             <div class="col">

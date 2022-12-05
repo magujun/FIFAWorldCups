@@ -157,9 +157,9 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
         <div class="container mt-3 mb-3">
             <?php echo $display_avatar; ?>
             <div class="m-3 col-12">
-                <!form method="post" action="<?php echo $PHP_SELF; ?>">
+                <!form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                 <form method="post" id="account" action="">
-                    <<div class="row mb-3 mt-3">
+                    <div class="row mb-3 mt-3">
                         <div class="col-6">
                             <h3>World Cups Account Created</h3>
                         </div>
@@ -205,7 +205,7 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
                         <div class="col-6">
                             <label for="password">Confirm New Password: </label>
                             <input type="password" name="password-check" class="form-control">
-                            ?php if ($errors['password'] != null) {
+                            <?php if ($errors['password'] != null) {
                             echo "<small id='passwdError' class='errormsg form-text text-muted'>" . $errors['password'] . "</small>"; 
                             } else { echo "<small id='passwordlHelp' class='form-text text-muted'>
                                 You can change your password if you want. &#x1F609;
@@ -220,7 +220,7 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
                     </div>
                 </form>
                 <div class="row mt-3">
-                    <!form method="POST" action="<?php echo $PHP_SELF; ?>" enctype="multipart/form-data">
+                    <!form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
                     <form method="POST" id="upload" action="" enctype="multipart/form-data" class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-row">
                             <div class="col">
@@ -254,7 +254,7 @@ if ($_SESSION['origin'] != hex2bin("createaccount")) {
     <body class="loadAnimation">
         <div class="container mt-3 mb-3">
             <div class="m-3 col-12">
-                <!form method="post" action="<?php echo $PHP_SELF; ?>">
+                <!form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                 <form method="post" id="account" action="">
                     <div class="form-group row mt-3 mb-3">
                         <div class="col-6">

@@ -325,7 +325,7 @@ mysqli_close($mysqli);
                     <h2>All Time Stats</h2>
                 </div>  
             </div>
-            <!form method="post" action="<?php echo $PHP_SELF; ?>">
+            <!form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
             <form method="post" id="update" action="">
                 <div class="row">
                     <div class="col-12">
